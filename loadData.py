@@ -11,7 +11,8 @@ Creates training and test data by either
 
 """
 
-trainingSetFile = '../training-data/data.pkl'
+trainingSetFile = 'croppedFrames_01234_combined.pkl'
+
 
 createTestSet = True   # set to False if you want to load in test set
 if createTestSet:
@@ -20,7 +21,7 @@ if createTestSet:
 else:
     testSetFile = '../training-data/data.pkl'
     
-coordinateDataPresent = True
+coordinateDataPresent = False
 
 ##############################################################################
 ##############################################################################
@@ -29,14 +30,17 @@ print('\nloading data set:', trainingSetFile)
 with open(trainingSetFile, 'rb') as file:
     inputData = pickle.load(file)
 if coordinateDataPresent:
-    frames, classification, coords = inputData
+    frames, classificationTemp, coords = inputData
 else:
-    frames, classification = inputData
+    frames, classificationTemp = inputData
 numberSamples, yDim, xDim = frames.shape
 print('... {} frames, {} x {}'.format(numberSamples,yDim,xDim))
 if coordinateDataPresent:
     numberCoords = len(coords)
     print( '...', numberCoords, 'coordinates')
+    classification = classificationTemp
+else:
+    classification = classificationTemp < 1
     
 # load in training set and determine parameters from shape
 if not createTestSet:
@@ -44,16 +48,19 @@ if not createTestSet:
     with open(testSetFile, 'rb') as file:
         inputData = pickle.load(file)
         if coordinateDataPresent:
-            framesTest, classificationTest, coordsTest = inputData
+            framesTest, classificationTestTemp, coordsTest = inputData
         else:
-            framesTest, classificationTest = inputData
+            framesTest, classificationTestTemp = inputData
             # read parameters from test set shape
         numberTestSamples, yTestDim, xTestDim = framesTest.shape
         print('... {} frames, {} x {}'.format(numberTestSamples,yTestDim,xTestDim))
         if coordinateDataPresent:
             numberTestCoords = len(coordsTest)
             print( '...', numberTestCoords, 'coordinates')
-
+            classificationTest = classificationTestTemp 
+        else:
+            classificationTest = classificationTestTemp < 1
+            
 # now determine test and training sets
 if createTestSet:
     # split into train/test data
