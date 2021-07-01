@@ -9,9 +9,7 @@ run this before doing anything else
 """
 
 import numpy as np
-
 import pylab as plt
-
 import pickle
     
 import torch
@@ -25,4 +23,6 @@ from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 
+import particleAnalysis as pa
+import cv2 as cv
 
