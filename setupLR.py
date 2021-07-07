@@ -40,4 +40,4 @@ if printCoefficients:
     print(modelLR.coef_)
     print(modelLR.intercept_)
 
-
+modelType = 'LR'

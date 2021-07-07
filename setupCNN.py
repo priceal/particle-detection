@@ -8,17 +8,29 @@ sets up data sets for use in convolutional network and defines
 the network. To change number of layers, you need to modify the
 definition of modelCNN near end.
 
+
+The CNN is intended to reduce input receptive field to a single pixel during 
+training. NC0 = input channels, NC1, etc. number of features in subsequent 
+layers. Final number of channels should be = 1. Each convolution reduces the 
+dimension of the field by K-1 where K = dimension of kernel. Therefore...
+
+N - (K1-1) - (K2-1) - ... -(KL) = 1
+
+for NxN training images, and L hidden layers. 
+
+To create fully connected end layers, use kernel sizes of 1x1.
+
 VARIABLES NEEDED: X_train, Y_train, X_test, Y_test
 NAMES DEFINED: modelCNN, xtrain, ytrain, xtest, ytest, loss_fn    
 
 """
 
-# this is a CNN that is intended to reduce input receptive field to a single
-# pixel. NC0 = input channels, NC1, etc. number of features in subsequent 
-# layers. K1, etc. are sizes of kernels. Note, kernel sizes must reduce
-# input frame size to a single pixel. 
-NC0, NC1, NC2, NC3 = 1, 4, 16, 1
-K1, K2, K3 = 3, 3, 3
+# define channels and kernel sizes for layers
+NC0, NC1, NC2, NC3, NC4, NC5, NC6 = 1, 4, 16, 32, 16, 4, 1
+K1, K2, K3, K4, K5, K6 = 3, 3, 3, 1, 1, 1
+
+# define the activation function. 
+activationFunction = nn.ReLU()
 
 ##############################################################################
 ##############################################################################
@@ -45,10 +57,18 @@ ytest =  torch.FloatTensor(
 
 modelCNN = nn.Sequential(
     nn.Conv2d(NC0,NC1,kernel_size=K1,stride=1,padding=0), 
-    nn.Sigmoid(),
+    activationFunction,
     nn.Conv2d(NC1,NC2,kernel_size=K2,stride=1,padding=0),
-    nn.Sigmoid(),
+    activationFunction,
     nn.Conv2d(NC2,NC3,kernel_size=K3,stride=1,padding=0),
+    activationFunction,
+    nn.Conv2d(NC3,NC4,kernel_size=K4,stride=1,padding=0),
+    activationFunction,
+    nn.Conv2d(NC4,NC5,kernel_size=K5,stride=1,padding=0),
+    activationFunction,
+    nn.Conv2d(NC5,NC6,kernel_size=K6,stride=1,padding=0),
     nn.Sigmoid(),
     )
 loss_fn = nn.BCELoss()
+
+modelType = 'CNN'

@@ -50,3 +50,4 @@ modelFCN = nn.Sequential(
     )
 loss_fn = nn.BCELoss()
 
+modelType = 'FCN'
