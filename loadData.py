@@ -11,7 +11,7 @@ Creates training and test data by either
 
 """
 
-trainingSetFile = 'croppedFrames_01234_combined.pkl'
+trainingSetFile = 'C:/Users/priceal/Desktop/DOCUMENTS/research/PROJECTS/particle-detection-old/croppedFrames_01234_combined.pkl'
 
 createTestSet = True   # set to False if you want to load in test set
 if createTestSet:
