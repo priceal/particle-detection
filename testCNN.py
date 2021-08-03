@@ -14,13 +14,50 @@ border = 3
 # name of CNN model to test
 testModel = modelCNN
 
+stride = 1
+
 ###############################################################################
-# load, scale and convert image to tensor
+# load image and create scanned view of image array
 testImageLoaded = pa.loadim( imageDF['path'][testImage] )
+yFrame, xFrame = testImageLoaded.shape
+scaledImage = testImageLoaded/testImageLoaded.max()
+dim = 2*buffer+1
+xscan = np.zeros( ((yFrame-2*buffer) * (xFrame-2*buffer),dim,dim) )
+c = 0
+for j in range(0,yFrame-dim+1,stride):
+    for i in range(0,xFrame-dim+1,stride):
+        xscan[c] = scaledImage[j:j+dim,i:i+dim]
+        c += 1
+       
+# now apply model correctly for different cases
+if isinstance(testModel,linear_model.LogisticRegression):
+    x_valid = xscan.reshape(len(xscan),dim*dim)
+    x_pred_valid = testModel.predict( x_valid )
+    mapout = x_pred_valid.reshape((yFrame-2*buffer,xFrame-2*buffer))
+    
+if isinstance(model,torch.nn.modules.container.Sequential):
+    x_valid = xscan.reshape(len(xscan),dim*dim)
+    testTensor = torch.FloatTensor( testImageLoaded[np.newaxis,np.newaxis,:,:] )
+    x_pred_valid = testModel( x_valid ).detach().numpy()
+    mapout = x_pred_eval.detach().numpy()
+
+if isinstance(model,torch.nn.modules.container.Sequential):
+    x_valid = xscan.reshape(len(xscan),dim*dim)
+    testTensor = torch.FloatTensor( testImageLoaded[np.newaxis,np.newaxis,:,:] )
+    x_pred_valid = testModel( x_valid ).detach().numpy()
+    mapout = x_pred_eval.detach().numpy()
+
 testTensor = torch.FloatTensor( 
                             testImageLoaded[np.newaxis,np.newaxis,:,:] \
                             / testImageLoaded.max()
                            )
+    
+    
+    
+    
+    
+    
+    
     
 # calcualte feature map and convert to image array and add border
 mapout = testModel(testTensor)

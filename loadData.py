@@ -11,14 +11,14 @@ Creates training and test data by either
 
 """
 
-trainingSetFile = 'C:/Users/priceal/Desktop/DOCUMENTS/research/PROJECTS/particle-detection-old/croppedFrames_01234_combined.pkl'
+trainingSetFile = '/home/allen/projects/training-data/data/trainingSets/C_NMPH4_span4_0123458_train.pkl'
 
-createTestSet = True   # set to False if you want to load in test set
+createTestSet = False   # set to False if you want to load in test set
 if createTestSet:
     testFraction = 0.20    
     testState = 1
 else:
-    testSetFile = '../training-data/data.pkl'
+    testSetFile = '/home/allen/projects/training-data/data/trainingSets/C_NMPH4_span4_0123458_test.pkl'
     
 coordinateDataPresent = False
 

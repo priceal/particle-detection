@@ -56,12 +56,13 @@ if testModelType == 'CNN':
     x_valid = torch.FloatTensor( scaledImage[np.newaxis,np.newaxis,:,:] )
     mapout = testModel( x_valid ).detach().numpy()
   
-# round, convert to int and pad to produce final feature map
-imageOut = np.round( np.squeeze( mapout ) ).astype(int)
-mapFinal = cv.copyMakeBorder(imageOut,buffer,buffer,buffer,buffer,cv.BORDER_CONSTANT,0)
+# pad to produce final feature map, then round and convert to int
+mapFinal = cv.copyMakeBorder( \
+           np.squeeze( mapout ) ,buffer,buffer,buffer,buffer,cv.BORDER_CONSTANT,0)
+imageOut = np.round( mapFinal ).astype(int) # binary classification
 
 # create array of particle positions predicted
-testY, testX = np.where( mapFinal == 1 )
+testY, testX = np.where( imageOut == 1 )
 particleCoords = np.array( list( zip(testX,testY)))
 print(" ...{} particles labeled.".format(len(particleCoords)))
 
@@ -71,7 +72,7 @@ for element in pickedCoords:
     pickedImage[ element[1], element[0] ] = 1
 
 # calculate confusion matrix using prediction and actual locations
-cf = confusion_matrix( pickedImage.flatten(), mapFinal.flatten() )
+cf = confusion_matrix( pickedImage.flatten(), imageOut.flatten() )
 truePositives = cf[1,1]
 falsePositives = cf[0,1]
 trueNegatives = cf[0,0]
@@ -108,6 +109,11 @@ fig, ax = plt.subplots(1,2,sharex='row', sharey = 'row')
 ax[0].imshow( testImageLoaded, cmap = 'gray', interpolation = 'nearest')
 ax[1].imshow( evalImage, cmap = 'flag', interpolation = 'nearest')
 pa.showPeaks( testImage, particleCoords, imgDF = imageDF )
+
+
+# this will be code that applies openCV simpleBlobDetector
+
+
 
 
 

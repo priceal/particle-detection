@@ -6,7 +6,7 @@ v. 2021 02 21
 """
 
 # define data directory and image file range
-image_directory = 'C:/Users/priceal/Desktop/DOCUMENTS/research/PROJECTS/training-data/data'
+image_directory = '/home/allen/projects/training-data/data/images'
 
 #############################################################################
 #############################################################################

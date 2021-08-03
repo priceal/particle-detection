@@ -26,7 +26,7 @@ NAMES DEFINED: modelCNN, xtrain, ytrain, xtest, ytest, loss_fn
 """
 
 # define channels and kernel sizes for layers
-NC0, NC1, NC2, NC3, NC4, NC5, NC6 = 1, 4, 16, 32, 16, 4, 1
+NC0, NC1, NC2, NC3, NC4, NC5, NC6 = 1, 3, 9, 27, 9, 3, 1 
 K1, K2, K3, K4, K5, K6 = 3, 3, 3, 1, 1, 1
 
 # define the activation function. 
