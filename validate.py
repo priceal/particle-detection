@@ -6,15 +6,19 @@ Created on Sun Jun 13 15:36:50 2021
 """
 
 # define the image number of the image to test
-testImage = 0
-pickedCoordsFile = '/home/allen/projects/training-data/data/particleCoordinates/reviewedXY_00.npy'
+testImage = 8
+pickedCoordsFile = '/home/allen/projects/training-data/xyData/reviewedXY_08.npy'
 
 # this should be (n-1)/2 where n is length of side of receptive field
 buffer = 3
 stride = 1
 
+# peak finding parameters for final peak filtering of feature map (backend)
+minDistance = 3       # min distance between peaks
+relThreshold = 0.5    # min relative threshold allowed for peaks
+
 # name of model to test
-testModel = modelCNN
+testModel = modelFCN
 
 # only change the following to override setting from setup script
 testModelType = modelType        
@@ -45,7 +49,7 @@ print("Now using {} model to create feature map...".format(testModelType))
 if testModelType == 'LR':
     x_valid = xscan.reshape(len(xscan),dim*dim)
     x_pred_valid = testModel.predict( x_valid )
-    mapout = x_pred_valid.reshape((yFrame-2*buffer,xFrame-2*buffer))
+    mapout = x_pred_valid.reshape((yFrame-2*buffer,xFrame-2*buffer)).astype(np.uint8)
 
 if testModelType == 'FCN':
     x_valid = torch.FloatTensor( xscan.reshape(len(xscan),dim*dim) )
@@ -56,22 +60,26 @@ if testModelType == 'CNN':
     x_valid = torch.FloatTensor( scaledImage[np.newaxis,np.newaxis,:,:] )
     mapout = testModel( x_valid ).detach().numpy()
   
-# round, convert to int and pad to produce final feature map
-imageOut = np.round( np.squeeze( mapout ) ).astype(int)
-mapFinal = cv.copyMakeBorder(imageOut,buffer,buffer,buffer,buffer,cv.BORDER_CONSTANT,0)
+# pad to produce final feature map (will consist of values 0 to 1)
+mapFinal = cv.copyMakeBorder( \
+           np.squeeze( mapout ) ,buffer,buffer,buffer,buffer,cv.BORDER_CONSTANT,0)
 
-# create array of particle positions predicted
-testY, testX = np.where( mapFinal == 1 )
-particleCoords = np.array( list( zip(testX,testY)))
+# create array of particle positions predicted using local max finder backend
+particleCoords = peak_local_max( mapFinal, \
+                                min_distance = minDistance, \
+                                threshold_rel = relThreshold \
+                                )
+# now create the image w/ a single 1 per particle
+particleImage = np.zeros((yFrame,xFrame),dtype=np.uint8)
+particleImage[tuple(particleCoords.T)] = 1
 print(" ...{} particles labeled.".format(len(particleCoords)))
 
-# create image of hand picked particles
-pickedImage = np.zeros((yFrame,xFrame),dtype=int)
-for element in pickedCoords:
-    pickedImage[ element[1], element[0] ] = 1
+# create image of hand picked particles (the ground truth)
+pickedImage = np.zeros((yFrame,xFrame),dtype=np.uint8)
+pickedImage[pickedCoords[:,1],pickedCoords[:,0]] = 1
 
-# calculate confusion matrix using prediction and actual locations
-cf = confusion_matrix( pickedImage.flatten(), mapFinal.flatten() )
+# calculate confusion matrix using ground truth and particle image
+cf = confusion_matrix( pickedImage.flatten(), particleImage.flatten() )
 truePositives = cf[1,1]
 falsePositives = cf[0,1]
 trueNegatives = cf[0,0]
@@ -94,20 +102,12 @@ print(frmt.format('NEGATIVE',trueNegatives,falseNegatives,negatives))
 print(frmt.format('POSITIVE',falsePositives,truePositives,positives))
 print(frmt.format('TOTAL',actualMisses,actualHits,negatives+positives))
 
-# create a new image, which shows model predictions in red and actual in white
-# using "flag" colormap, black = 12, white = 4, and red = 0
-evalImage = 12*np.ones((yFrame,xFrame),dtype=int)
-for element in particleCoords:
-    evalImage[ element[1], element[0] ] = 0    
-for element in pickedCoords:
-    evalImage[ element[1], element[0] ] = 4
-    
-# display new image next to original, and open another window with original
-# with predicted peaks circled
-fig, ax = plt.subplots(1,2,sharex='row', sharey = 'row')
-ax[0].imshow( testImageLoaded, cmap = 'gray', interpolation = 'nearest')
-ax[1].imshow( evalImage, cmap = 'flag', interpolation = 'nearest')
-pa.showPeaks( testImage, particleCoords, imgDF = imageDF )
+# plot original image amd ground truth image, both with predicted particle
+# locations circled
+pa.showPeaks( testImage, np.fliplr(particleCoords), imgDF = imageDF )
+pa.showPeaks( pickedImage, np.fliplr(particleCoords), imgDF = imageDF )
+
+
 
 
 

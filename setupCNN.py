@@ -26,8 +26,8 @@ NAMES DEFINED: modelCNN, xtrain, ytrain, xtest, ytest, loss_fn
 """
 
 # define channels and kernel sizes for layers
-NC0, NC1, NC2, NC3, NC4, NC5, NC6 = 1, 3, 9, 27, 9, 3, 1 
-K1, K2, K3, K4, K5, K6 = 3, 3, 3, 1, 1, 1
+NC0, NC1, NC2, NC3, NC4 = 1, 4, 16, 4, 1
+K1, K2, K3, K4 = 5, 3, 1, 1
 
 # define the activation function. 
 activationFunction = nn.ReLU()
@@ -63,10 +63,6 @@ modelCNN = nn.Sequential(
     nn.Conv2d(NC2,NC3,kernel_size=K3,stride=1,padding=0),
     activationFunction,
     nn.Conv2d(NC3,NC4,kernel_size=K4,stride=1,padding=0),
-    activationFunction,
-    nn.Conv2d(NC4,NC5,kernel_size=K5,stride=1,padding=0),
-    activationFunction,
-    nn.Conv2d(NC5,NC6,kernel_size=K6,stride=1,padding=0),
     nn.Sigmoid(),
     )
 loss_fn = nn.BCELoss()

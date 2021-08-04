@@ -11,14 +11,14 @@ Creates training and test data by either
 
 """
 
-trainingSetFile = '/home/allen/projects/training-data/data/trainingSets/C_NMPH4_span4_0123458_train.pkl'
+trainingSetFile = '/home/allen/projects/training-data/trainingSets/C_NMPH4_span4_0123458_train.pkl'
 
 createTestSet = False   # set to False if you want to load in test set
 if createTestSet:
     testFraction = 0.20    
     testState = 1
 else:
-    testSetFile = '/home/allen/projects/training-data/data/trainingSets/C_NMPH4_span4_0123458_test.pkl'
+    testSetFile = '/home/allen/projects/training-data/trainingSets/C_NMPH4_span4_0123458_test.pkl'
     
 coordinateDataPresent = False
 
