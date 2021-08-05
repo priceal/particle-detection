@@ -7,18 +7,18 @@ Created on Sun Jun 13 15:36:50 2021
 
 # define the image number of the image to test
 testImage = 8
-pickedCoordsFile = '/home/allen/projects/training-data/xyData/reviewedXY_08.npy'
+pickedCoordsFile = '/home/allen/projects/training-data/data/particleCoordinates/reviewedXY_08.npy'
 
 # this should be (n-1)/2 where n is length of side of receptive field
 buffer = 3
-stride = 1
+stride = 1   # normally 1, used to make scanned view of image if needed
 
 # peak finding parameters for final peak filtering of feature map (backend)
-minDistance = 3       # min distance between peaks
+minDistance = 10       # min distance between peaks
 relThreshold = 0.5    # min relative threshold allowed for peaks
 
 # name of model to test
-testModel = modelFCN
+testModel = modelLR
 
 # only change the following to override setting from setup script
 testModelType = modelType        
@@ -48,8 +48,8 @@ if testModelType != 'CNN':
 print("Now using {} model to create feature map...".format(testModelType))
 if testModelType == 'LR':
     x_valid = xscan.reshape(len(xscan),dim*dim)
-    x_pred_valid = testModel.predict( x_valid )
-    mapout = x_pred_valid.reshape((yFrame-2*buffer,xFrame-2*buffer)).astype(np.uint8)
+    x_pred_valid = testModel.predict_proba( x_valid )[:,1] #prob for hit
+    mapout = x_pred_valid.reshape((yFrame-2*buffer,xFrame-2*buffer))
 
 if testModelType == 'FCN':
     x_valid = torch.FloatTensor( xscan.reshape(len(xscan),dim*dim) )
