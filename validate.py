@@ -7,7 +7,7 @@ Created on Sun Jun 13 15:36:50 2021
 
 # define the image number of the image to test
 testImage = 8
-pickedCoordsFile = '/home/allen/projects/training-data/data/particleCoordinates/reviewedXY_08.npy'
+pickedCoordsFile = '/home/allen/projects/training-data/xyData/reviewedXY_08.npy'
 
 # this should be (n-1)/2 where n is length of side of receptive field
 buffer = 3
@@ -18,7 +18,7 @@ minDistance = 10       # min distance between peaks
 relThreshold = 0.5    # min relative threshold allowed for peaks
 
 # name of model to test
-testModel = modelLR
+testModel = modelCNN
 
 # only change the following to override setting from setup script
 testModelType = modelType        
@@ -66,24 +66,42 @@ mapFinal = cv.copyMakeBorder( \
 
 # create array of particle positions predicted using local max finder backend
 particleCoords = peak_local_max( mapFinal, \
-                                min_distance = minDistance, \
-                                threshold_rel = relThreshold \
+                                 min_distance = minDistance, \
+                                 threshold_rel = relThreshold \
                                 )
-# now create the image w/ a single 1 per particle
-particleImage = np.zeros((yFrame,xFrame),dtype=np.uint8)
-particleImage[tuple(particleCoords.T)] = 1
 print(" ...{} particles labeled.".format(len(particleCoords)))
 
+# now create the image w/ a single 1 per particle
+predictionImage = np.zeros((yFrame,xFrame),dtype=np.uint8)
+predictionImage[tuple(particleCoords.T)] = 1
+
 # create image of hand picked particles (the ground truth)
-pickedImage = np.zeros((yFrame,xFrame),dtype=np.uint8)
-pickedImage[pickedCoords[:,1],pickedCoords[:,0]] = 1
+truthImage = np.zeros((yFrame,xFrame),dtype=np.uint8)
+truthImage[pickedCoords[:,1],pickedCoords[:,0]] = 1
+
+# now create dilated versions of ground truth (pickedImage) and predicted
+# particles (particleImage)
+kernel = np.ones((3,3)).astype(np.uint8)
+predictionDilated = cv.dilate(predictionImage,kernel)
+truthDilated = cv.dilate(truthImage,kernel)
+truePositiveImage = truthImage & predictionDilated
+falseNegativeImage = cv.subtract(truthImage,predictionDilated)
+falsePositiveImage = cv.subtract(predictionImage,truthDilated)
+truePositives = 
+falsePositives = 
+trueNegatives = 
+falseNegatives = 
 
 # calculate confusion matrix using ground truth and particle image
-cf = confusion_matrix( pickedImage.flatten(), particleImage.flatten() )
-truePositives = cf[1,1]
-falsePositives = cf[0,1]
-trueNegatives = cf[0,0]
-falseNegatives = cf[1,0]
+#cf = confusion_matrix( truthImage.flatten(), predictionImage.flatten() )
+#truePositives = cf[1,1]
+#falsePositives = cf[0,1]
+#trueNegatives = cf[0,0]
+#falseNegatives = cf[1,0]
+
+
+
+
 negatives = trueNegatives + falseNegatives
 positives = truePositives + falsePositives
 actualHits = truePositives + falseNegatives
@@ -104,8 +122,13 @@ print(frmt.format('TOTAL',actualMisses,actualHits,negatives+positives))
 
 # plot original image amd ground truth image, both with predicted particle
 # locations circled
+#fig, ax = plt.subplots(1,3, sharex='row', sharey='row')
+#ax[0].imshow(predictionImage)
+#ax[1].imshow(truthImage)
+#ax[2].imshow(falsePositiveImage)
+
 pa.showPeaks( testImage, np.fliplr(particleCoords), imgDF = imageDF )
-pa.showPeaks( pickedImage, np.fliplr(particleCoords), imgDF = imageDF )
+
 
 
 

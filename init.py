@@ -19,7 +19,7 @@ import torch.optim as optim
 #from torch.utils.data import Dataset, DataLoader, random_split
 #from torch.utils.data.sampler import SubsetRandomSampler
 
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, precision_recall_curve
 from sklearn.model_selection import train_test_split
 from sklearn import linear_model
 
