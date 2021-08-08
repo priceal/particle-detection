@@ -14,8 +14,8 @@ NAMES NEEDED: xtrain, ytrain, xtest, ytest, loss_fn
 model = modelFCN
 
 # define number of reporting macrocycles and epochs per reporting cycle
-epochs = 100
-reporting = 20
+epochs = 200
+reporting = 40
 
 # optimization parameters
 learning_rate = 0.01

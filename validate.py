@@ -6,8 +6,8 @@ Created on Sun Jun 13 15:36:50 2021
 """
 
 # define the image number of the image to test
-testImage = 8
-pickedCoordsFile = '/home/allen/projects/training-data/xyData/reviewedXY_08.npy'
+testImage = 1
+pickedCoordsFile = '/home/allen/projects/training-data/data/particleCoordinates/reviewedXY_01.npy'
 
 # this should be (n-1)/2 where n is length of side of receptive field
 buffer = 3
@@ -18,7 +18,7 @@ minDistance = 10       # min distance between peaks
 relThreshold = 0.5    # min relative threshold allowed for peaks
 
 # name of model to test
-testModel = modelCNN
+testModel = modelFCN
 
 # only change the following to override setting from setup script
 testModelType = modelType        
@@ -84,31 +84,22 @@ truthImage[pickedCoords[:,1],pickedCoords[:,0]] = 1
 kernel = np.ones((3,3)).astype(np.uint8)
 predictionDilated = cv.dilate(predictionImage,kernel)
 truthDilated = cv.dilate(truthImage,kernel)
+
+# use these to create maps of TP, FN and FP, and sum them
 truePositiveImage = truthImage & predictionDilated
 falseNegativeImage = cv.subtract(truthImage,predictionDilated)
 falsePositiveImage = cv.subtract(predictionImage,truthDilated)
-truePositives = 
-falsePositives = 
-trueNegatives = 
-falseNegatives = 
-
-# calculate confusion matrix using ground truth and particle image
-#cf = confusion_matrix( truthImage.flatten(), predictionImage.flatten() )
-#truePositives = cf[1,1]
-#falsePositives = cf[0,1]
-#trueNegatives = cf[0,0]
-#falseNegatives = cf[1,0]
-
-
-
-
-negatives = trueNegatives + falseNegatives
+truePositives = truePositiveImage.sum()
+falsePositives = falsePositiveImage.sum()
+falseNegatives = falseNegativeImage.sum()
 positives = truePositives + falsePositives
 actualHits = truePositives + falseNegatives
-actualMisses = trueNegatives + falsePositives
+
 print('')
-print('test set contains {:d} TRUE and {:d} FALSE'.format(actualHits,actualMisses))
-print('predictions contain {} POSITIVE and {} NEGATIVE'.format(positives,negatives))
+print('Summary statistics for threshold = 0.5')
+print('')
+print('validation image contains {:d} particles'.format(actualHits))
+print('prediction contains {:d} particles'.format(positives))
 print('')
 print('recall    {:>2.1f}%'.format(100*truePositives/actualHits) )
 print('precision {:>2.1f}%'.format(100*truePositives/(truePositives+falsePositives)) )
@@ -116,9 +107,9 @@ frmt = '{:<10} {:>10} {:>10} {:>10}'
 print('')
 print('           **CONFUSION MATRIX**')
 print(frmt.format(' ','FALSE','TRUE','TOTAL'))
-print(frmt.format('NEGATIVE',trueNegatives,falseNegatives,negatives))
+print(frmt.format('NEGATIVE',np.NaN,falseNegatives,np.NaN))
 print(frmt.format('POSITIVE',falsePositives,truePositives,positives))
-print(frmt.format('TOTAL',actualMisses,actualHits,negatives+positives))
+print(frmt.format('TOTAL',np.NaN,actualHits,np.NaN))
 
 # plot original image amd ground truth image, both with predicted particle
 # locations circled

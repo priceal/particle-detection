@@ -15,7 +15,7 @@ x_eval =  xtest
 y_eval = ytest 
 
 # choose the model to evaluate
-model = modelCNN
+model = modelFCN
 
 ##############################################################################
 ##############################################################################
@@ -45,6 +45,8 @@ actualHits = truePositives + falseNegatives
 actualMisses = trueNegatives + falsePositives
 
 print('')
+print('Summary statistics for threshold = 0.5')
+print('')
 print('test set contains {:d} TRUE and {:d} FALSE'.format(actualHits,actualMisses))
 print('predictions contain {} POSITIVE and {} NEGATIVE'.format(positives,negatives))
 print('')
@@ -52,7 +54,7 @@ print('recall    {:>2.1f}%'.format(100*truePositives/actualHits) )
 print('precision {:>2.1f}%'.format(100*truePositives/(truePositives+falsePositives)) )
 frmt = '{:<10} {:>10} {:>10} {:>10}'
 print('')
-print('       **CONFUSION MATRIX (THRESHOLD=0.5)**')
+print('            **CONFUSION MATRIX**')
 print(frmt.format(' ','FALSE','TRUE','TOTAL'))
 print(frmt.format('NEGATIVE',trueNegatives,falseNegatives,negatives))
 print(frmt.format('POSITIVE',falsePositives,truePositives,positives))
