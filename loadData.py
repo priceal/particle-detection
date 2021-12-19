@@ -11,9 +11,9 @@ Creates training and test data by either
 
 """
 
-trainingSetFile = '/home/allen/projects/training-data/data/trainingSets/C_NMPH4_span4_0123458_train.pkl'
+trainingSetFile = '/home/allen/projects/training-data/test.pkl'
 
-createTestSet = False   # set to False if you want to load in test set
+createTestSet = True   # set to False if you want to load in test set
 if createTestSet:
     testFraction = 0.20    
     testState = 1
@@ -39,7 +39,8 @@ if coordinateDataPresent:
     print( '...', numberCoords, 'coordinates')
     classification = classificationTemp
 else:
-    classification = classificationTemp < 1
+#    classification = classificationTemp < 1   # this is for multiple classes
+    classification = classificationTemp  # for binary classes
     
 # load in training set and determine parameters from shape
 if not createTestSet:
