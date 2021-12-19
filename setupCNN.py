@@ -14,7 +14,7 @@ training. NC0 = input channels, NC1, etc. number of features in subsequent
 layers. Final number of channels should be = 1. Each convolution reduces the 
 dimension of the field by K-1 where K = dimension of kernel. Therefore...
 
-N - (K1-1) - (K2-1) - ... -(KL) = 1
+N - (K1-1) - (K2-1) - ... -(KL-1) = 1
 
 for NxN training images, and L hidden layers. 
 
@@ -27,7 +27,7 @@ NAMES DEFINED: modelCNN, xtrain, ytrain, xtest, ytest, loss_fn
 
 # define channels and kernel sizes for layers
 NC0, NC1, NC2, NC3, NC4 = 1, 4, 16, 4, 1
-K1, K2, K3, K4 = 5, 3, 1, 1
+K1, K2, K3, K4 = 5, 5, 1, 1
 
 # define the activation function. 
 activationFunction = nn.ReLU()
