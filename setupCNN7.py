@@ -26,10 +26,10 @@ NAMES DEFINED: modelCNN, xtrain, ytrain, xtest, ytest, loss_fn
 """
 
 # define channels and kernel sizes for layers
-#                   description                             size 
-NC0 = 1             # layer 0: input                        9x9
-K1, NC1 = 5, 6      # layer 1: convolution of layer 0       5x5
-K2, NC2 = 5, 24     # layer 2: convolution of layer 1       1x1
+#                   description                             output size 
+NC0 = 1             # layer 0: input                        7x7
+K1, NC1 = 5, 6      # layer 1: convolution of layer 0       3x3
+K2, NC2 = 3, 24     # layer 2: convolution of layer 1       1x1
 K3, NC3 = 1, 6      # layer 3: FC of layer 2                1x1
 K4, NC4 = 1, 1      # layer 4: fully connected to layer 3   1x1
 

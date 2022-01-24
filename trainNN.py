@@ -11,11 +11,11 @@ NAMES NEEDED: xtrain, ytrain, xtest, ytest, loss_fn
 """
 
 # choose the model to refine
-model = modelFCN
+model = modelCNN
 
 # define number of reporting macrocycles and epochs per reporting cycle
-epochs = 200
-reporting = 40
+epochs = 50
+reporting = 10
 
 # optimization parameters
 learning_rate = 0.01
