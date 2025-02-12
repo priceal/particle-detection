@@ -11,7 +11,7 @@ Creates training and test data by either
 
 """
 
-trainingSetFile = '/home/allen/projects/training-data/test.pkl'
+trainingSetFile = '/home/allen/projects/training-data/ALL_2022_01_11.pkl'
 
 createTestSet = True   # set to False if you want to load in test set
 if createTestSet:
@@ -31,7 +31,7 @@ with open(trainingSetFile, 'rb') as file:
 if coordinateDataPresent:
     frames, classificationTemp, coords = inputData
 else:
-    frames, classificationTemp = inputData
+    (header,parameters, frames, xyclass ) = inputData
 numberSamples, yDim, xDim = frames.shape
 print('... {} frames, {} x {}'.format(numberSamples,yDim,xDim))
 if coordinateDataPresent:
@@ -40,7 +40,7 @@ if coordinateDataPresent:
     classification = classificationTemp
 else:
 #    classification = classificationTemp < 1   # this is for multiple classes
-    classification = classificationTemp  # for binary classes
+    classification = xyclass  # for binary classes
     
 # load in training set and determine parameters from shape
 if not createTestSet:

@@ -18,7 +18,7 @@ minDistance = 10       # min distance between peaks
 relThreshold = 0.5    # min relative threshold allowed for peaks
 
 # name of model to test
-testModel = modelFCN
+testModel = modelCNN
 
 # only change the following to override setting from setup script
 testModelType = modelType        
